@@ -79,7 +79,7 @@ fun ConfigScreen(
 
         OutlinedTextField(
             value = state.pricePerKmInput,
-            onValueChange = viewModel::onPricePerKmChanged,
+            onValueChange = { viewModel.onPricePerKmChanged(it) },
             label = { Text("Precio mínimo por km ($)") },
             placeholder = { Text("Ej: 1.50") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -91,7 +91,7 @@ fun ConfigScreen(
 
         OutlinedTextField(
             value = state.earningsPerHourInput,
-            onValueChange = viewModel::onEarningsPerHourChanged,
+            onValueChange = { viewModel.onEarningsPerHourChanged(it) },
             label = { Text("Ganancia mínima por hora ($)") },
             placeholder = { Text("Ej: 25.00") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -99,9 +99,9 @@ fun ConfigScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        state.errorMessage?.let { error ->
+        state.errorMessage?.let { errorMsg ->
             Text(
-                text = error,
+                text = errorMsg,
                 color = MaterialTheme.colorScheme.error,
                 fontSize = 13.sp,
                 modifier = Modifier.padding(top = 12.dp)
