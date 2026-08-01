@@ -21,11 +21,48 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Limpiar carpetas duplicadas en el runner
+      - name: Limpieza y Mapeo Correcto de Código
         run: |
-          find app/src/main/java -mindepth 2 -type d -name "app" -exec rm -rf {} +
+          # 1. Crear la estructura limpia y oficial de paquetes Android
+          mkdir -p clean_app/src/main/java/com/tuapp/tripadvisor
 
-      - name: Preparar estructura de Gradle y Manifest
+          # 2. Copiar únicamente los archivos reales .kt desde donde hayan quedado
+          find app/src/main/java -name "*.kt" -exec cp {} clean_app/src/main/java/com/tuapp/tripadvisor/ \; 2>/dev/null || true
+          find java/com/tuapp/tripadvisor -name "*.kt" -exec cp {} clean_app/src/main/java/com/tuapp/tripadvisor/ \; 2>/dev/null || true
+
+          # Reorganizar paquetes específicos en sus subcarpetas correspondientes
+          mkdir -p clean_app/src/main/java/com/tuapp/tripadvisor/ui/config
+          mkdir -p clean_app/src/main/java/com/tuapp/tripadvisor/ui/overlay
+          mkdir -p clean_app/src/main/java/com/tuapp/tripadvisor/ui/theme
+          mkdir -p clean_app/src/main/java/com/tuapp/tripadvisor/domain/model
+          mkdir -p clean_app/src/main/java/com/tuapp/tripadvisor/data/preferences
+          mkdir -p clean_app/src/main/java/com/tuapp/tripadvisor/service/overlay
+          mkdir -p clean_app/src/main/java/com/tuapp/tripadvisor/service/accessibility
+          mkdir -p clean_app/src/main/java/com/tuapp/tripadvisor/util
+
+          # Mover archivos a sus carpetas verdaderas
+          mv clean_app/src/main/java/com/tuapp/tripadvisor/ConfigScreen.kt clean_app/src/main/java/com/tuapp/tripadvisor/ui/config/ 2>/dev/null || true
+          mv clean_app/src/main/java/com/tuapp/tripadvisor/ConfigViewModel.kt clean_app/src/main/java/com/tuapp/tripadvisor/ui/config/ 2>/dev/null || true
+          mv clean_app/src/main/java/com/tuapp/tripadvisor/PermissionDialogs.kt clean_app/src/main/java/com/tuapp/tripadvisor/ui/config/ 2>/dev/null || true
+          mv clean_app/src/main/java/com/tuapp/tripadvisor/SemaphoreWidget.kt clean_app/src/main/java/com/tuapp/tripadvisor/ui/overlay/ 2>/dev/null || true
+          mv clean_app/src/main/java/com/tuapp/tripadvisor/Theme.kt clean_app/src/main/java/com/tuapp/tripadvisor/ui/theme/ 2>/dev/null || true
+          mv clean_app/src/main/java/com/tuapp/tripadvisor/TripOffer.kt clean_app/src/main/java/com/tuapp/tripadvisor/domain/model/ 2>/dev/null || true
+          mv clean_app/src/main/java/com/tuapp/tripadvisor/TripEvaluation.kt clean_app/src/main/java/com/tuapp/tripadvisor/domain/model/ 2>/dev/null || true
+          mv clean_app/src/main/java/com/tuapp/tripadvisor/TripEvaluator.kt clean_app/src/main/java/com/tuapp/tripadvisor/domain/model/ 2>/dev/null || true
+          mv clean_app/src/main/java/com/tuapp/tripadvisor/UserPreferences.kt clean_app/src/main/java/com/tuapp/tripadvisor/data/preferences/ 2>/dev/null || true
+          mv clean_app/src/main/java/com/tuapp/tripadvisor/PreferencesRepository.kt clean_app/src/main/java/com/tuapp/tripadvisor/data/preferences/ 2>/dev/null || true
+          mv clean_app/src/main/java/com/tuapp/tripadvisor/OverlayService.kt clean_app/src/main/java/com/tuapp/tripadvisor/service/overlay/ 2>/dev/null || true
+          mv clean_app/src/main/java/com/tuapp/tripadvisor/RideAccessibilityService.kt clean_app/src/main/java/com/tuapp/tripadvisor/service/accessibility/ 2>/dev/null || true
+          mv clean_app/src/main/java/com/tuapp/tripadvisor/PermissionHelper.kt clean_app/src/main/java/com/tuapp/tripadvisor/util/ 2>/dev/null || true
+          mv clean_app/src/main/java/com/tuapp/tripadvisor/ScreenTextParser.kt clean_app/src/main/java/com/tuapp/tripadvisor/util/ 2>/dev/null || true
+
+          # Reemplazar carpeta de codigo 'app' desordenada por la limpia
+          rm -rf app/src/main/java
+          mkdir -p app/src/main
+          mv clean_app/src/main/java app/src/main/
+          rm -rf clean_app
+
+      - name: Preparar Infraestructura de Gradle y Manifest
         run: |
           mkdir -p app/src/main/res/xml
           mkdir -p app/src/main/res/values
@@ -188,4 +225,3 @@ jobs:
           name: app-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 14
-
