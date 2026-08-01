@@ -22,8 +22,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Crear configuraciones de Gradle, Manifest y Recursos
+      - name: Limpiar carpetas duplicadas e iniciar entorno
         run: |
+          # Eliminar carpetas 'app' que se crearon por error dentro de ui/theme o ui/overlay
+          rm -rf app/src/main/java/com/tuapp/tripadvisor/ui/theme/app
+          rm -rf app/src/main/java/com/tuapp/tripadvisor/ui/overlay/app
+          
           mkdir -p app/src/main/res/xml
           mkdir -p app/src/main/res/values
 
@@ -185,4 +189,3 @@ jobs:
           name: app-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
-
