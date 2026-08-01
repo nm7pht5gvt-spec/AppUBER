@@ -1,0 +1,50 @@
+package com.tuapp.tripadvisor.ui.config
+
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+
+@Composable
+fun OverlayPermissionDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Permiso de superposición necesario") },
+        text = { Text("Para mostrar el semáforo sobre otras aplicaciones, necesitamos permiso para mostrar ventanas sobre la pantalla.") },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Conceder Permiso")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    )
+}
+
+@Composable
+fun AccessibilityPermissionDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Permiso de accesibilidad necesario") },
+        text = { Text("Para leer la información de los viajes en pantalla y calcular tu tarifa, activa el servicio de accesibilidad.") },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text("Ir a Configuración")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        }
+    )
+}
