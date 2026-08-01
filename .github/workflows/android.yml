@@ -21,9 +21,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Reestructurar paquetes y reparar ConfigScreen
+      - name: Limpiar y reestructurar código Kotlin
         run: |
-          # 1. Crear directorios limpios
+          # Limpiar desorden previo
+          rm -rf app/src/main/java
+          
+          # Crear la estructura oficial de paquetes
           mkdir -p app/src/main/java/com/tuapp/tripadvisor/ui/config
           mkdir -p app/src/main/java/com/tuapp/tripadvisor/ui/overlay
           mkdir -p app/src/main/java/com/tuapp/tripadvisor/ui/theme
@@ -35,7 +38,7 @@ jobs:
           mkdir -p app/src/main/res/xml
           mkdir -p app/src/main/res/values
 
-          # 2. Reemplazar ConfigScreen.kt por la versión impecable y corregida
+          # ConfigScreen.kt Corregido
           cat << 'EOF' > app/src/main/java/com/tuapp/tripadvisor/ui/config/ConfigScreen.kt
           package com.tuapp.tripadvisor.ui.config
 
