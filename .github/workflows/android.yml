@@ -1,3 +1,5 @@
+
+
 name: Android CI Build
 
 on:
@@ -21,6 +23,14 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Asegurar gradle.properties
+        run: |
+          cat << 'EOF' > gradle.properties
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          android.useAndroidX=true
+          kotlin.code.style=official
+          EOF
+
       - name: Generar Gradle Wrapper
         run: gradle wrapper --gradle-version 8.7
 
@@ -28,7 +38,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Compilar APK Debug
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew :app:assembleDebug --stacktrace
 
       - name: Subir APK como artefacto descargable
         uses: actions/upload-artifact@v4
@@ -36,4 +46,3 @@ jobs:
           name: app-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 14
-
