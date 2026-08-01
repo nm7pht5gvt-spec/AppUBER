@@ -25,6 +25,12 @@ jobs:
         run: |
           mkdir -p app
           
+          cat << 'EOF' > gradle.properties
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          android.useAndroidX=true
+          kotlin.code.style=official
+          EOF
+
           cat << 'EOF' > settings.gradle.kts
           pluginManagement {
               repositories {
