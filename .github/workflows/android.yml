@@ -24,8 +24,9 @@ jobs:
       - name: Configurar Gradle en el entorno
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Compilar APK Debug
-        run: gradle assembleDebug --stacktrace
+        - name: Compilar APK Debug
+        run: gradle :app:assembleDebug --stacktrace
+
 
       - name: Subir APK como artefacto descargable
         uses: actions/upload-artifact@v4
