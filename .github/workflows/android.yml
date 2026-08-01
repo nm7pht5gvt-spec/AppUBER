@@ -21,12 +21,18 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Limpiar y reestructurar código Kotlin
+      - name: Rescatar archivos y aplanar estructura de proyecto
         run: |
-          # Limpiar desorden previo
-          rm -rf app/src/main/java
-          
-          # Crear la estructura oficial de paquetes
+          # 1. Crear directorio temporal para rescatar codigo
+          mkdir -p /tmp/recovered_code
+
+          # 2. Copiar todos los archivos fuente validos a la zona de rescate
+          find . -name "*.kt" -exec cp {} /tmp/recovered_code/ \; 2>/dev/null || true
+
+          # 3. Limpiar completamente el espacio de trabajo para eliminar carpetas anidadas
+          rm -rf app java .github/workflows/app
+
+          # 4. Crear estructura limpia y oficial de Android
           mkdir -p app/src/main/java/com/tuapp/tripadvisor/ui/config
           mkdir -p app/src/main/java/com/tuapp/tripadvisor/ui/overlay
           mkdir -p app/src/main/java/com/tuapp/tripadvisor/ui/theme
@@ -38,7 +44,25 @@ jobs:
           mkdir -p app/src/main/res/xml
           mkdir -p app/src/main/res/values
 
-          # ConfigScreen.kt Corregido
+          # 5. Acomodar cada archivo .kt rescatado en su subcarpeta correspondiente
+          cp /tmp/recovered_code/MainActivity.kt app/src/main/java/com/tuapp/tripadvisor/ 2>/dev/null || true
+          cp /tmp/recovered_code/ConfigScreen.kt app/src/main/java/com/tuapp/tripadvisor/ui/config/ 2>/dev/null || true
+          cp /tmp/recovered_code/ConfigViewModel.kt app/src/main/java/com/tuapp/tripadvisor/ui/config/ 2>/dev/null || true
+          cp /tmp/recovered_code/PermissionDialogs.kt app/src/main/java/com/tuapp/tripadvisor/ui/config/ 2>/dev/null || true
+          cp /tmp/recovered_code/SemaphoreWidget.kt app/src/main/java/com/tuapp/tripadvisor/ui/overlay/ 2>/dev/null || true
+          cp /tmp/recovered_code/Theme.kt app/src/main/java/com/tuapp/tripadvisor/ui/theme/ 2>/dev/null || true
+          cp /tmp/recovered_code/TripOffer.kt app/src/main/java/com/tuapp/tripadvisor/domain/model/ 2>/dev/null || true
+          cp /tmp/recovered_code/TripEvaluation.kt app/src/main/java/com/tuapp/tripadvisor/domain/model/ 2>/dev/null || true
+          cp /tmp/recovered_code/TripEvaluator.kt app/src/main/java/com/tuapp/tripadvisor/domain/model/ 2>/dev/null || true
+          cp /tmp/recovered_code/UserPreferences.kt app/src/main/java/com/tuapp/tripadvisor/data/preferences/ 2>/dev/null || true
+          cp /tmp/recovered_code/PreferencesRepository.kt app/src/main/java/com/tuapp/tripadvisor/data/preferences/ 2>/dev/null || true
+          cp /tmp/recovered_code/OverlayService.kt app/src/main/java/com/tuapp/tripadvisor/service/overlay/ 2>/dev/null || true
+          cp /tmp/recovered_code/RideAccessibilityService.kt app/src/main/java/com/tuapp/tripadvisor/service/accessibility/ 2>/dev/null || true
+          cp /tmp/recovered_code/PermissionHelper.kt app/src/main/java/com/tuapp/tripadvisor/util/ 2>/dev/null || true
+          cp /tmp/recovered_code/ScreenTextParser.kt app/src/main/java/com/tuapp/tripadvisor/util/ 2>/dev/null || true
+
+      - name: Sobrescribir ConfigScreen.kt con sintaxis 100% limpia
+        run: |
           cat << 'EOF' > app/src/main/java/com/tuapp/tripadvisor/ui/config/ConfigScreen.kt
           package com.tuapp.tripadvisor.ui.config
 
