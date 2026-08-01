@@ -21,6 +21,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Limpiar carpetas duplicadas en el runner
+        run: |
+          find app/src/main/java -mindepth 2 -type d -name "app" -exec rm -rf {} +
+
       - name: Preparar estructura de Gradle y Manifest
         run: |
           mkdir -p app/src/main/res/xml
@@ -184,3 +188,4 @@ jobs:
           name: app-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 14
+
