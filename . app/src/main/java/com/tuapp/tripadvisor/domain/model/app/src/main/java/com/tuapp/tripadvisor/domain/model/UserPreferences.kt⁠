@@ -1,0 +1,6 @@
+package com.tuapp.tripadvisor.domain.model
+
+data class UserPreferences(
+    val minPricePerKm: Double,
+    val minEarningsPerHour: Double
+)

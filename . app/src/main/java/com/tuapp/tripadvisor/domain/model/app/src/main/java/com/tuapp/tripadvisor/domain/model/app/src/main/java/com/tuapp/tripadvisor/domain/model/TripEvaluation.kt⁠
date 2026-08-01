@@ -1,0 +1,15 @@
+package com.tuapp.tripadvisor.domain.model
+
+enum class SemaphoreStatus {
+    RED,
+    YELLOW,
+    GREEN
+}
+
+data class TripEvaluation(
+    val status: SemaphoreStatus,
+    val realPricePerKm: Double,
+    val realEarningsPerHour: Double,
+    val pricePerKmDiffPercent: Double,
+    val earningsPerHourDiffPercent: Double
+)

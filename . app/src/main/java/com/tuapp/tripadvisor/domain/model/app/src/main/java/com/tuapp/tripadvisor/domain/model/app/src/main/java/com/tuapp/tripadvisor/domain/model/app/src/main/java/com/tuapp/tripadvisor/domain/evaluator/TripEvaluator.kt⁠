@@ -1,0 +1,62 @@
+package com.tuapp.tripadvisor.domain.evaluator
+
+import com.tuapp.tripadvisor.domain.model.SemaphoreStatus
+import com.tuapp.tripadvisor.domain.model.TripEvaluation
+import com.tuapp.tripadvisor.domain.model.TripOffer
+import com.tuapp.tripadvisor.domain.model.UserPreferences
+
+object TripEvaluator {
+
+    private const val YELLOW_TOLERANCE = 0.05
+
+    fun evaluate(offer: TripOffer, prefs: UserPreferences): TripEvaluation {
+        val safeDistance = if (offer.distanceKm <= 0.0) 0.0001 else offer.distanceKm
+        val safeTimeHours = if (offer.estimatedTimeMinutes <= 0.0) 0.0001 / 60.0 else offer.estimatedTimeMinutes / 60.0
+
+        val realPricePerKm = offer.offeredPrice / safeDistance
+        val realEarningsPerHour = offer.offeredPrice / safeTimeHours
+
+        val kmDiffPercent = percentDiff(realPricePerKm, prefs.minPricePerKm)
+        val hourDiffPercent = percentDiff(realEarningsPerHour, prefs.minEarningsPerHour)
+
+        val status = determineStatus(
+            realPricePerKm = realPricePerKm,
+            realEarningsPerHour = realEarningsPerHour,
+            prefs = prefs
+        )
+
+        return TripEvaluation(
+            status = status,
+            realPricePerKm = realPricePerKm,
+            realEarningsPerHour = realEarningsPerHour,
+            pricePerKmDiffPercent = kmDiffPercent,
+            earningsPerHourDiffPercent = hourDiffPercent
+        )
+    }
+
+    private fun determineStatus(
+        realPricePerKm: Double,
+        realEarningsPerHour: Double,
+        prefs: UserPreferences
+    ): SemaphoreStatus {
+        val kmOk = realPricePerKm >= prefs.minPricePerKm
+        val hourOk = realEarningsPerHour >= prefs.minEarningsPerHour
+
+        val kmYellowThreshold = prefs.minPricePerKm * (1 - YELLOW_TOLERANCE)
+        val hourYellowThreshold = prefs.minEarningsPerHour * (1 - YELLOW_TOLERANCE)
+
+        val kmNearMiss = realPricePerKm >= kmYellowThreshold
+        val hourNearMiss = realEarningsPerHour >= hourYellowThreshold
+
+        return when {
+            kmOk && hourOk -> SemaphoreStatus.GREEN
+            !kmNearMiss || !hourNearMiss -> SemaphoreStatus.RED
+            else -> SemaphoreStatus.YELLOW
+        }
+    }
+
+    private fun percentDiff(real: Double, target: Double): Double {
+        if (target == 0.0) return 0.0
+        return ((real - target) / target) * 100.0
+    }
+}
